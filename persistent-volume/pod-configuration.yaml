@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: my-container
+    image: nginx
+    volumeMounts:
+    - mountPath: "/var/www/html"
+      name: mypod
+  volumes:
+  - name: mypod
+    persistentVolumeClaim:
+      claimName: example-pvc
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: busybox-container
+    image: busybox
+    volumeMounts:
+    - name: config-dir
+      mountPath: /etc/config
+  volumes:
+  - name: config-dir
+    configMap:
+      name: bb-configmap
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: busybox-container
+    image: busybox
+    volumeMounts:
+    - name: secret-dir
+      mountPath: /etc/secret
+      readOnly: true
+  volumes:
+  - name: secret-dir
+    secret:
+      secretName: bb-secret
